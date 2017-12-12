@@ -18,6 +18,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,16 +45,21 @@ public class GreetingController {
     @Autowired
     private EntityManagerFactory em;
     
-    
-    //@RequestMapping("/actors")
-    @RequestMapping("/films")
-    public List<Film> allFilms(){
-    //public List<Actor> allActors(){
+   @CrossOrigin(origins= {"*"})
+    @RequestMapping("/actors")
+    public List<Actor> allActors(){
     	return em. createEntityManager()
-    			.createQuery("from Film")
-    			//.createQuery("from Actor")
+    			.createQuery("from Actor")
     			.getResultList();
     }
+   
+   @CrossOrigin(origins= {"*"})
+   @RequestMapping("/films")
+   public List<Film> allFilms(){
+      	return em. createEntityManager()
+   			.createQuery("from Film")
+   			.getResultList();
+   }
     @RequestMapping("/data")
     public List<String> dataNegara(@RequestParam("pre") String prefix){
     	List<String> data = new ArrayList();
