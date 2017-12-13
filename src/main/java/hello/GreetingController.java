@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -19,11 +20,19 @@ import javax.persistence.EntityManagerFactory;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hello.model.Actor;
+import hello.model.Film;
+import hello.model.Greeting;
+
 @RestController
+@RequestMapping("/greet")
 public class GreetingController {
 
     private static final String template = "Hello, %s!";
@@ -44,6 +53,67 @@ public class GreetingController {
     
     @Autowired
     private EntityManagerFactory em;
+	private Object id;
+    
+    //@RequestMapping(method={RequestMethod.POST, RequestMethod.GET})
+	@CrossOrigin(origins= {"*"})
+    @PostMapping("/addActor")
+    public int addActor(Actor actor) {
+    	int hasil = 0;
+    	try {
+    	
+    	//Actor newActor = new Actor();
+    	//newActor.setFirstName("Bandung");
+    	//newActor.setLastName("Lautan");
+    	actor.setLastUpdate(new Date ());
+    	
+    	EntityManager e = em.createEntityManager();
+    	e.getTransaction().begin();
+    	e.persist(actor);
+    	e.getTransaction().commit();
+    	
+    	}catch (Exception ex) {
+    		System.out.println(ex.getMessage());
+    		hasil = 1;
+    	}
+    	return hasil;
+    }
+ 
+	@CrossOrigin(origins= {"*"})
+    @PostMapping("/editActor")
+    public int editActor(Actor actor) {
+    	int hasil = 0;
+    	try {
+    	
+    	EntityManager e = em.createEntityManager();
+    	
+    	e.getTransaction().begin();
+    	
+		Actor currentActor = e.find(Actor.class, actor.getActorId());
+    	currentActor.setFirstName(actor.getFirstName());
+    	currentActor.setLastName(actor.getLastName());
+    	currentActor.setLastUpdate(new Date ());
+    	
+    	    	
+    	e.getTransaction().commit();
+    	
+    	}catch (Exception ex) {
+    		System.out.println(ex.getMessage());
+    		hasil = 1;
+    	}
+    	return hasil;
+    }
+	
+	@CrossOrigin(origins= {"*"})
+    @GetMapping("/getActor")
+    public Actor getActor(@RequestParam("id")Short id) {
+		return
+				em.createEntityManager().find(Actor.class, id);
+    	
+	}
+    	
+    	
+    
     
    @CrossOrigin(origins= {"*"})
     @RequestMapping("/actors")
